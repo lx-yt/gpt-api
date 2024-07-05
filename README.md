@@ -1,3 +1,3 @@
-# React + TypeScript + Vite + Tailwind + ESLint
+# GPT-API
 
-A template for packages with React, TypeScript, Vite, Tailwind, and ESLint already set up.
+This package allows you to interact with GPT APIs and includes a model/version select, input and output textareas, and other utilities.

@@ -10,7 +10,7 @@ export default defineConfig({
     sourcemap: true,
     lib: {
       entry: "src/index.ts",
-      name: "Package",
+      name: "GPT-API",
       fileName: "index",
     },
     rollupOptions: {

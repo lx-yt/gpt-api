@@ -1,10 +1,10 @@
 {
-  "name": "@lexyth/package-template-react",
+  "name": "@lx-yt/gpt-api",
   "version": "0.0.0",
-  "description": "A template for npm projects with React, TypeScript, Vite, Tailwind, and ESLint already set up.",
+  "description": "This package allows you to interact with GPT APIs and includes a model/version select, input and output textareas, and other utilities.",
   "keywords": [],
   "author": "Lexyth",
-  "repository": "github:lexyth/package-template-react",
+  "repository": "github:lx-yt/gpt-api",
   "license": "MIT",
   "type": "module",
   "files": [
