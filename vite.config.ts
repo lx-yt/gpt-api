@@ -12,6 +12,7 @@ export default defineConfig({
       entry: "src/index.ts",
       name: "GPT-API",
       fileName: "index",
+      formats: ["es"],
     },
     rollupOptions: {
       external: ["react", "react-dom"],
