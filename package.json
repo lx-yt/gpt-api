@@ -2,9 +2,12 @@
   "name": "@lx-yt/gpt-api",
   "version": "0.0.1",
   "description": "This package allows you to interact with GPT APIs and includes a model/version select, input and output textareas, and other utilities.",
-  "keywords": [],
+  "keywords": ["react", "typescript", "gpt", "gemini"],
   "author": "Lexyth",
-  "repository": "github:lx-yt/gpt-api",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lx-yt/gpt-api.git"
+  },
   "license": "MIT",
   "type": "module",
   "files": [
