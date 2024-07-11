@@ -1,11 +1,32 @@
+import { RootLogger } from "@lx-yt/logging";
+const logger = RootLogger.getLogger("App");
+logger.info("Starting App...");
+
+import React from "react";
+
+import { Input } from "./components/Input";
+import { Output } from "./components/Output";
+import { Button } from "./components/Button";
+
+import { useHandler } from "./hooks/useHandler";
+
 function App() {
+  logger.debug("Rendering App...");
+
+  const handler = useHandler(
+    React.useMemo(() => {
+      return {
+        model: "gemini-1.5-pro-latest",
+      };
+    }, [])
+  );
+
   return (
-    <>
-      <h1 className="m-4 text-3xl font-bold underline">
-        Template for a package built with Vite + React + TypeScript + Tailwind +
-        ESLint.
-      </h1>
-    </>
+    <div className="m-4 p-4">
+      <Input handler={handler} />
+      <Button handler={handler} />
+      <Output handler={handler} />
+    </div>
   );
 }
 
