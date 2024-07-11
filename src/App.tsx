@@ -22,10 +22,19 @@ function App() {
   );
 
   return (
-    <div className="m-4 p-4">
-      <Input handler={handler} />
-      <Button handler={handler} />
-      <Output handler={handler} />
+    <div className="m-4 p-4 flex flex-col">
+      <Input
+        handler={handler}
+        className="min-h-52 m-4 p-4 text-black border-2 border-black rounded shadow shadow-slate-300"
+      />
+      <Button
+        handler={handler}
+        className="m-4 p-4 rounded bg-sky-300"
+      />
+      <Output
+        handler={handler}
+        className="min-h-52 m-4 p-4 text-slate-500 border-2 rounded shadow shadow-slate-300"
+      />
     </div>
   );
 }
