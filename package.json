@@ -24,8 +24,9 @@
   "types": "./dist/index.d.ts",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "tsc -b && vitest run && vite build",
     "lint": "eslint . --ext js,jsx,ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "test": "vitest",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -47,12 +48,14 @@
     "eslint-plugin-react-hooks": "^4.6.2",
     "eslint-plugin-react-perf": "^3.3.2",
     "eslint-plugin-react-refresh": "^0.4.7",
+    "jsdom": "^24.1.0",
     "postcss": "^8.4.39",
     "tailwindcss": "^3.4.4",
     "typescript": "^5.4.5",
     "vite": "^5.3.1",
     "vite-plugin-checker": "^0.6.4",
     "vite-plugin-dts": "^3.9.1",
-    "vite-plugin-eslint2": "^4.4.0"
+    "vite-plugin-eslint2": "^4.4.0",
+    "vitest": "^1.6.0"
   }
 }
