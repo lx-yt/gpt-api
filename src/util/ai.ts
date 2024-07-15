@@ -18,11 +18,11 @@ export async function run(prompt: string, config: Config) {
   logger.info(`Running model ${config.model} with prompt: ${prompt}`);
 
   let result: string;
-  if (import.meta.env["VITE_SIMULATE_API"] === "true") {
+  if (import.meta.env.DEV) {
     logger.info("Simulating API call...");
     result = await new Promise((resolve) =>
       setTimeout(() => {
-        resolve("Simulated result for:" + prompt);
+        resolve(`Simulated call to '${config.model}' with prompt: '${prompt}'`);
       }, 1000)
     );
   } else {
