@@ -1,4 +1,7 @@
 import type { Handler } from "../util/ai";
+import MarkdownPreview from "@uiw/react-markdown-preview";
+
+const emptyObject = {};
 
 export function Output({
   handler,
@@ -12,11 +15,10 @@ export function Output({
   const { output } = handler;
 
   return (
-    <textarea
-      value={output}
-      readOnly
-      className={className}
-      style={style}
-    ></textarea>
+    <MarkdownPreview
+      source={output}
+      className={className ?? ""}
+      style={style ?? emptyObject}
+    />
   );
 }
