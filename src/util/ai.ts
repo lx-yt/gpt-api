@@ -8,10 +8,10 @@ export interface Config {
 }
 
 export interface Handler {
-  prompt: string;
-  output: string;
   config: Config;
-  run: () => void;
+  prompt: string;
+  readonly run: () => Promise<void>;
+  readonly output: string;
 }
 
 export async function run(prompt: string, config: Config) {
@@ -33,21 +33,37 @@ export async function run(prompt: string, config: Config) {
   return result;
 }
 
-export function createHandler(config?: Config) {
+export function createHandler(
+  config?: Config | null,
+  outputChangedCallback?: ((output: string) => void) | null
+) {
+  let output = "";
+
+  const changeOutput = (value: string) => {
+    output = value;
+    outputChangedCallback?.(output);
+  };
+
   const handler: Handler = {
-    prompt: "",
-    output: "",
     config: config ?? { model: "" },
-    run: function () {
-      run(handler.prompt, handler.config)
+    prompt: "",
+    run: async function () {
+      return run(handler.prompt, handler.config)
         .then((text) => {
-          handler.output = text;
+          changeOutput(text);
         })
         .catch((error: unknown) => {
-          handler.output = error as string;
+          changeOutput(error as string);
           logger.error(`Error: ${error as string}`);
         });
     },
+    get output() {
+      return output;
+    },
+    set output(_: string) {
+      throw new Error("Cannot set 'output' directly.");
+    },
   };
+
   return handler;
 }
