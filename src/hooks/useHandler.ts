@@ -4,45 +4,51 @@ const logger = RootLogger.getLogger("useHandler");
 import React from "react";
 
 import { createHandler } from "../util/ai";
+
 import type { Config, Handler } from "../util/ai";
 
-export interface HandlerWithSetPrompt extends Handler {
-  setPrompt: (value: string) => void;
+export interface ReactiveHandler extends Handler {
+  setPrompt: React.Dispatch<React.SetStateAction<string>>;
+  setConfig: React.Dispatch<React.SetStateAction<Config>>;
 }
 
+/**
+ * @deprecated
+ */
 interface Store<Type> {
   subscribe: (listener: () => void) => () => void;
   getSnapshot: () => Type;
 }
 
-function createStoredHandler(config: Config): Store<HandlerWithSetPrompt> {
+/**
+ * @deprecated
+ */
+function createHandlerStore(config: Config): Store<ReactiveHandler> {
   logger.debug("Creating StoredHandler...");
 
-  const handler = createHandler(config);
+  const handler = createHandler(config, () => {
+    emit();
+  });
 
   let _prompt = handler.prompt;
-  let _output = handler.output;
   let _config = handler.config;
 
   Object.defineProperties(handler, {
     prompt: {
-      get: () => _prompt,
-      set: (value: string) => {
-        logger.debug(`setPrompt: ${value} -> ${_prompt} -> ${handler.prompt}`);
+      get() {
+        return _prompt;
+      },
+      set(value: string) {
+        logger.debug(`prompt = ${handler.prompt} -> ${_prompt}`);
         _prompt = value;
         emit();
       },
     },
-    output: {
-      get: () => _output,
-      set: (value: string) => {
-        _output = value;
-        emit();
-      },
-    },
     config: {
-      get: () => _config,
-      set: (value: Config) => {
+      get() {
+        return _config;
+      },
+      set(value: Config) {
         _config = value;
         emit();
       },
@@ -50,12 +56,27 @@ function createStoredHandler(config: Config): Store<HandlerWithSetPrompt> {
   });
 
   // Redefining for typescript because it doesn't understand Object.defineProperties
-  let snapshot = {
-    ...handler,
-    setPrompt: (value: string) => {
-      handler.prompt = value;
-    },
+  let snapshot: ReactiveHandler;
+  const updateSnapshot = () => {
+    snapshot = {
+      ...handler,
+      setPrompt: (value) => {
+        logger.debug("setPrompt: ", value);
+        if (typeof value === "function") {
+          value = value(handler.prompt);
+        }
+        handler.prompt = value;
+      },
+      setConfig: (value) => {
+        logger.debug("setConfig: ", value);
+        if (typeof value === "function") {
+          value = value(handler.config);
+        }
+        handler.config = value;
+      },
+    };
   };
+  updateSnapshot();
 
   const listeners: (() => void)[] = [];
 
@@ -67,17 +88,23 @@ function createStoredHandler(config: Config): Store<HandlerWithSetPrompt> {
   };
 
   const getSnapshot = () => {
+    logger.debug("getSnapshot: ", snapshot);
     return snapshot;
   };
 
   const emit = () => {
     logger.debug("Emitting...");
-    snapshot = {
-      ...handler,
-      setPrompt: (value: string) => {
-        handler.prompt = value;
-      },
-    };
+    const old = snapshot;
+    updateSnapshot();
+    const n = snapshot;
+    logger.debug(
+      "Change Snapshot: ",
+      old,
+      "->",
+      n,
+      Object.is(old, n),
+      old === n
+    );
     listeners.forEach((l) => {
       l();
     });
@@ -86,11 +113,14 @@ function createStoredHandler(config: Config): Store<HandlerWithSetPrompt> {
   return { subscribe, getSnapshot };
 }
 
-export function useHandler(initialConfig: Config): HandlerWithSetPrompt {
+/**
+ * @deprecated
+ */ // @ts-expect-error This is deprecated so it's not used.
+function useHandlerStore(initialConfig: Config): ReactiveHandler {
   logger.debug("Rendering useHandler");
 
   const storedHandler_memo = React.useMemo(() => {
-    return createStoredHandler(initialConfig);
+    return createHandlerStore(initialConfig);
   }, [initialConfig]);
 
   const synchedHandler = React.useSyncExternalStore(
@@ -98,5 +128,61 @@ export function useHandler(initialConfig: Config): HandlerWithSetPrompt {
     storedHandler_memo.getSnapshot
   );
 
+  logger.debug("synchedHandler: ", {
+    ...synchedHandler,
+    prompt: synchedHandler.prompt,
+    config: synchedHandler.config,
+  });
+
   return synchedHandler;
+}
+
+export function useHandler(initialConfig: Config): ReactiveHandler {
+  logger.debug("Rendering useHandler");
+
+  const [output, setOutput] = React.useState("");
+
+  const handler = React.useMemo(() => {
+    return createHandler(initialConfig, (output) => {
+      setOutput(output);
+    });
+  }, [initialConfig]);
+
+  const [prompt, setPrompt] = React.useState(handler.prompt);
+  const [config, setConfig] = React.useState(handler.config);
+
+  const setPromptWrapper: React.Dispatch<React.SetStateAction<string>> =
+    React.useCallback(
+      (value) => {
+        logger.debug("setPrompt:", value);
+        if (typeof value === "function") {
+          value = value(handler.prompt);
+        }
+        handler.prompt = value;
+        setPrompt(value);
+      },
+      [handler]
+    );
+
+  const setConfigWrapper: React.Dispatch<React.SetStateAction<Config>> =
+    React.useCallback(
+      (value) => {
+        logger.debug("setConfig:", value);
+        if (typeof value === "function") {
+          value = value(handler.config);
+        }
+        handler.config = value;
+        setConfig(value);
+      },
+      [handler]
+    );
+
+  return {
+    prompt,
+    setPrompt: setPromptWrapper,
+    config,
+    setConfig: setConfigWrapper,
+    run: handler.run,
+    output: output,
+  };
 }
