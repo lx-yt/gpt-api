@@ -151,31 +151,20 @@ export function useHandler(initialConfig: Config): ReactiveHandler {
   const [prompt, setPrompt] = React.useState(handler.prompt);
   const [config, setConfig] = React.useState(handler.config);
 
+  handler.prompt = prompt;
+  handler.config = config;
+
   const setPromptWrapper: React.Dispatch<React.SetStateAction<string>> =
-    React.useCallback(
-      (value) => {
-        logger.debug("setPrompt:", value);
-        if (typeof value === "function") {
-          value = value(handler.prompt);
-        }
-        handler.prompt = value;
-        setPrompt(value);
-      },
-      [handler]
-    );
+    React.useCallback((value) => {
+      logger.debug("setPrompt:", value);
+      setPrompt(value);
+    }, []);
 
   const setConfigWrapper: React.Dispatch<React.SetStateAction<Config>> =
-    React.useCallback(
-      (value) => {
-        logger.debug("setConfig:", value);
-        if (typeof value === "function") {
-          value = value(handler.config);
-        }
-        handler.config = value;
-        setConfig(value);
-      },
-      [handler]
-    );
+    React.useCallback((value) => {
+      logger.debug("setConfig:", value);
+      setConfig(value);
+    }, []);
 
   return {
     prompt,
