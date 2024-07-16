@@ -1,6 +1,6 @@
 {
   "name": "@lx-yt/gpt-api",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "This package allows you to interact with GPT APIs and includes a model/version select, input and output textareas, and other utilities.",
   "keywords": [
     "react",
