@@ -14,6 +14,8 @@ export interface Handler {
   readonly output: string;
 }
 
+export const LLMS = ["gemini", "gpt", "claude"] as const;
+
 export async function run(prompt: string, config: Config) {
   logger.info(`Running model ${config.model} with prompt: ${prompt}`);
 
