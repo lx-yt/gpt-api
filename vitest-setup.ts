@@ -1,7 +1,7 @@
 import { RootLogger } from "@lx-yt/logging";
 const logger = RootLogger.getLogger("vitest-setup");
 
-logger//.getLogger("*:useHandler").minLevel = "debug";
+logger; //.getLogger("*:useHandler").minLevel = "debug";
 
 import "@testing-library/jest-dom/vitest";
 
