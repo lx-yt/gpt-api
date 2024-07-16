@@ -3,14 +3,14 @@ const logger = RootLogger.getLogger("Button");
 
 import React from "react";
 
-import type { Handler } from "../util/ai";
+import { ReactiveHandler } from "../hooks/useHandler";
 
 export function Button({
   handler,
   className,
   style,
 }: {
-  handler: Handler;
+  handler: ReactiveHandler;
   className?: string;
   style?: React.CSSProperties;
 }) {
