@@ -12,23 +12,21 @@ import { useHandler } from "../hooks/useHandler";
 
 import { Button } from "./Button";
 
+const config = { llm: "gemini", model: "gemini-1.5-pro-latest" } as const;
+
 describe("Button", () => {
   beforeEach(() => {
     cleanup();
   });
 
   test("should render", () => {
-    const { result } = renderHook(() =>
-      useHandler({ model: "gemini-1.5-pro-latest" })
-    );
+    const { result } = renderHook(() => useHandler(config));
     render(<Button handler={result.current} />);
     expect(screen.getByText("Submit")).toBeInTheDocument();
   });
 
-  test.todo("should run the handler", async () => {
+  test("should run the handler", async () => {
     const user = userEvent.setup();
-
-    const config = { model: "gemini-1.5-pro-latest" };
 
     const { result } = renderHook(() => useHandler(config));
 
@@ -39,10 +37,13 @@ describe("Button", () => {
     const buttonElement = screen.getByText("Submit");
     expect(buttonElement).toBeInTheDocument();
     await user.click(buttonElement);
-    await waitFor(() => {
-      expect(result.current.output).toEqual(
-        "Simulated call to 'gemini-1.5-pro-latest' with prompt: 'test'"
-      );
-    });
+    await waitFor(
+      () => {
+        expect(result.current.output).toEqual(
+          "Simulated call to llm 'gemini' model 'gemini-1.5-pro-latest' with prompt: 'test'"
+        );
+      },
+      { timeout: 4000 }
+    );
   });
 });
