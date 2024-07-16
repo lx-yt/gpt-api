@@ -63,9 +63,11 @@ export function createHandler(
           logger.error(`Error: ${error as string}`);
         });
     },
+
     get output() {
       return output;
     },
+
     set output(_: string) {
       throw new Error("Cannot set 'output' directly.");
     },
