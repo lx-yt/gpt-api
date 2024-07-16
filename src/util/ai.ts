@@ -29,7 +29,8 @@ export async function run(prompt: string, config: Config) {
       }, 1000)
     );
   } else {
-    result = await runGemini(config.model, prompt);
+    const run = getRun(config.llm);
+    result = await run(config.model, prompt);
     logger.info(`Result: ${result}`);
   }
 
