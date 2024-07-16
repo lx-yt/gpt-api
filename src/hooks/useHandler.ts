@@ -170,12 +170,14 @@ export function useHandler(
       setConfig(value);
     }, []);
 
-  return {
-    prompt,
-    setPrompt: setPromptWrapper,
-    config,
-    setConfig: setConfigWrapper,
-    run: handler.run,
-    output: output,
-  };
+  return React.useMemo(() => {
+    return {
+      prompt,
+      setPrompt: setPromptWrapper,
+      config,
+      setConfig: setConfigWrapper,
+      output,
+      run: handler.run,
+    };
+  }, [prompt, setPromptWrapper, config, setConfigWrapper, output, handler.run]);
 }
