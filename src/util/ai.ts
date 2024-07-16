@@ -69,3 +69,17 @@ export function createHandler(
 
   return handler;
 }
+
+function getAI(llm: (typeof LLMS)[number]) {
+  switch (llm) {
+    case "gemini":
+      return { run: run_gemini, MODELS: MODELS_gemini };
+
+    default:
+      if (LLMS.includes(llm)) {
+        throw new Error(`LLM not implemented: ${llm}`);
+      } else {
+        throw new Error(`Unknown llm: ${llm}`);
+      }
+  }
+}
