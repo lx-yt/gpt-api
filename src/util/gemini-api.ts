@@ -3,6 +3,15 @@ const logger = RootLogger.getLogger("gemini-api");
 
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
+export const MODELS = [
+  "gemini-1.5-pro",
+  "gemini-1.5-pro-latest",
+  "gemini-1.5-flash",
+  "gemini-1.5-flash-latest",
+  "gemini-1.0-pro",
+  "gemini-1.0-pro-latest",
+] as const;
+
 const API_KEY = import.meta.env["VITE_API_KEY"] as string;
 
 // Access your API key (see "Set up your API key" above)
