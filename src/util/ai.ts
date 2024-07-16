@@ -1,10 +1,11 @@
 import { RootLogger } from "@lx-yt/logging";
 const logger = RootLogger.getLogger("ai");
 
-import { run as runGemini } from "./gemini-api";
+import { run as run_gemini, MODELS as MODELS_gemini } from "./gemini-api";
 
 export interface Config {
-  model: string;
+  llm: (typeof LLMS)[number];
+  model: ReturnType<typeof getModels>[number];
 }
 
 export interface Handler {
