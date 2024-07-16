@@ -49,8 +49,10 @@ export function createHandler(
   };
 
   const handler: Handler = {
-    config: config ?? { model: "" },
+    config: config ?? { llm: LLMS[0], model: getModels(LLMS[0])[0] },
+
     prompt: "",
+
     run: async function () {
       return run(handler.prompt, handler.config)
         .then((text) => {
