@@ -137,7 +137,10 @@ function useHandlerStore(initialConfig: Config): ReactiveHandler {
   return synchedHandler;
 }
 
-export function useHandler(initialConfig: Config): ReactiveHandler {
+export function useHandler(
+  initialConfig?: Config,
+  onOutputChange?: (output: string) => void
+): ReactiveHandler {
   logger.debug("Rendering useHandler");
 
   const [output, setOutput] = React.useState("");
@@ -145,8 +148,9 @@ export function useHandler(initialConfig: Config): ReactiveHandler {
   const handler = React.useMemo(() => {
     return createHandler(initialConfig, (output) => {
       setOutput(output);
+      onOutputChange?.(output);
     });
-  }, [initialConfig]);
+  }, [initialConfig, onOutputChange]);
 
   const [prompt, setPrompt] = React.useState(handler.prompt);
   const [config, setConfig] = React.useState(handler.config);
