@@ -87,3 +87,7 @@ function getAI(llm: (typeof LLMS)[number]) {
 function getRun(llm: (typeof LLMS)[number]) {
   return getAI(llm).run;
 }
+
+export function getModels(llm: (typeof LLMS)[number]) {
+  return getAI(llm).MODELS;
+}
