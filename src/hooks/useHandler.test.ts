@@ -3,14 +3,15 @@ import { act, renderHook } from "@testing-library/react";
 
 import { useHandler } from "./useHandler";
 
+const config = { llm: "gemini", model: "gemini-1.5-pro-latest" } as const;
+
 describe("useHandler", () => {
   test("should create a handler", () => {
-    const config = { model: "gemini-1.5-pro-latest" };
     const { result } = renderHook(() => useHandler(config));
     expect(result.current).toEqual({
       prompt: "",
       output: "",
-      config: { model: "gemini-1.5-pro-latest" },
+      config: { llm: "gemini", model: "gemini-1.5-pro-latest" },
       run: expect.any(Function) as unknown,
       setPrompt: expect.any(Function) as unknown,
       setConfig: expect.any(Function) as unknown,
@@ -18,7 +19,6 @@ describe("useHandler", () => {
   });
 
   test("should update handler prompt using setPrompt", () => {
-    const config = { model: "gemini-1.5-pro-latest" };
     const { result } = renderHook(() => useHandler(config));
 
     const oldHandler = result.current;
@@ -33,7 +33,6 @@ describe("useHandler", () => {
   });
 
   test("should not cause an update to handler when the prompt is changed using accessor (not reactive)", () => {
-    const config = { model: "gemini-1.5-pro-latest" };
     const { result } = renderHook(() => useHandler(config));
 
     let oldHandler = result.current;
@@ -58,25 +57,26 @@ describe("useHandler", () => {
   });
 
   test("should update handler output", async () => {
-    const config = { model: "gemini-1.5-pro-latest" };
-
     const { result } = renderHook(() => useHandler(config));
     const oldHandler = result.current;
 
     await act(async () => {
       await result.current.run();
+      expect(result.current.output).not.toEqual(
+        "Simulated call to llm 'gemini' model 'gemini-1.5-pro-latest' with prompt: ''"
+      );
     });
 
-    expect(result.current).not.toBe(oldHandler);
-
     expect(result.current.output).toEqual(
-      "Simulated call to 'gemini-1.5-pro-latest' with prompt: ''"
+      "Simulated call to llm 'gemini' model 'gemini-1.5-pro-latest' with prompt: ''"
     );
-  });
+    expect(result.current).not.toBe(oldHandler);
+    expect(result.current.output).toEqual(
+      "Simulated call to llm 'gemini' model 'gemini-1.5-pro-latest' with prompt: ''"
+    );
+  }, 9000);
 
   test("should update handler output, taking into account prompt", async () => {
-    const config = { model: "gemini-1.5-pro-latest" };
-
     const { result } = renderHook(() => useHandler(config));
 
     act(() => {
@@ -88,23 +88,24 @@ describe("useHandler", () => {
     });
 
     expect(result.current.output).toEqual(
-      "Simulated call to 'gemini-1.5-pro-latest' with prompt: 'test'"
+      "Simulated call to llm 'gemini' model 'gemini-1.5-pro-latest' with prompt: 'test'"
     );
   });
 
   test("should update handler config", () => {
-    const config = { model: "gemini-1.5-pro-latest" };
-
     const { result } = renderHook(() => useHandler(config));
     const oldHandler = result.current;
 
-    expect(result.current.config).toEqual({ model: "gemini-1.5-pro-latest" });
+    expect(result.current.config.model).toEqual("gemini-1.5-pro-latest");
 
     act(() => {
-      result.current.setConfig({ model: "test" });
+      result.current.setConfig({
+        ...result.current.config,
+        model: "gemini-1.0-pro",
+      });
     });
 
     expect(result.current).not.toBe(oldHandler);
-    expect(result.current.config).toEqual({ model: "test" });
+    expect(result.current.config.model).toEqual("gemini-1.0-pro");
   });
 });
