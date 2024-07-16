@@ -2,18 +2,23 @@ import { expect, test, describe } from "vitest";
 
 import { run, createHandler } from "./ai";
 
+const config = { llm: "gemini", model: "gemini-1.5-pro-latest" } as const;
+
 describe("run", () => {
   test("should return a simulated result", async () => {
-    const result = await run("test", { model: "gemini-1.5-pro-latest" });
+    const result = await run("test", config);
     expect(result).toEqual(
-      "Simulated call to 'gemini-1.5-pro-latest' with prompt: 'test'"
+      "Simulated call to llm 'gemini' model 'gemini-1.5-pro-latest' with prompt: 'test'"
     );
   });
 
   test("should return using a different model", async () => {
-    const result = await run("test", { model: "gemini-1.5-flash-latest" });
+    const result = await run("test", {
+      ...config,
+      model: "gemini-1.5-flash-latest",
+    });
     expect(result).toEqual(
-      "Simulated call to 'gemini-1.5-flash-latest' with prompt: 'test'"
+      "Simulated call to llm 'gemini' model 'gemini-1.5-flash-latest' with prompt: 'test'"
     );
   });
 });
@@ -24,17 +29,21 @@ describe("createHandler", () => {
     expect(handler).toEqual({
       prompt: "",
       output: "",
-      config: { model: "" },
+      config: { llm: "gemini", model: "gemini-1.5-pro" },
       run: expect.any(Function) as unknown,
     });
   });
 
   test("should create a handler with a given config", () => {
-    const handler = createHandler({ model: "gemini-1.5-pro-latest" });
+    const handler = createHandler({
+      ...config,
+      llm: "gemini",
+      model: "gemini-1.0-pro-latest",
+    });
     expect(handler).toEqual({
       prompt: "",
       output: "",
-      config: { model: "gemini-1.5-pro-latest" },
+      config: { llm: "gemini", model: "gemini-1.0-pro-latest" },
       run: expect.any(Function) as unknown,
     });
   });
@@ -43,21 +52,20 @@ describe("createHandler", () => {
     const handler = createHandler();
     handler.prompt = "test";
     await handler.run();
-    expect(handler.output).toEqual("Simulated call to '' with prompt: 'test'");
+    expect(handler.output).toEqual(
+      "Simulated call to llm 'gemini' model 'gemini-1.5-pro' with prompt: 'test'"
+    );
   });
 
   test("should run the handler and trigger the output callback", async () => {
     let result = "";
-    const handler = createHandler(
-      { model: "gemini-1.5-pro-latest" },
-      (output) => {
-        result = output;
-      }
-    );
+    const handler = createHandler(config, (output) => {
+      result = output;
+    });
     handler.prompt = "test";
     await handler.run();
     expect(result).toEqual(
-      "Simulated call to 'gemini-1.5-pro-latest' with prompt: 'test'"
+      "Simulated call to llm 'gemini' model 'gemini-1.5-pro-latest' with prompt: 'test'"
     );
   });
 });
