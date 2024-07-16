@@ -1,6 +1,3 @@
-import { RootLogger } from "@lx-yt/logging";
-RootLogger.getLogger("ConfigView").minLevel = "debug";
-
 import { beforeEach, describe, expect, test } from "vitest";
 
 import { cleanup, render, renderHook, screen } from "@testing-library/react";
